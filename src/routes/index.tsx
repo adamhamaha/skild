@@ -1,11 +1,61 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Terminal } from "lucide-react";
+
+import SkillCard from "#/components/SkillCard";
+import { dummySkills } from "#/lib/dummySkills";
 
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
 	return (
-		<div className="p-8">
-			<h1>Hello tanstack</h1>
+		<div id="home">
+			<section className="hero">
+				<div className="copy">
+					<h1>
+						The Registry for <br />{" "}
+						<span className="text-gradient">Agentic Intelligence</span>
+					</h1>
+					<p>
+						A high performance registry for agentic agents built with TanStack
+						Router, React, and TypeScript. Skild provides a platform for
+						developers to share, discover, and collaborate on agentic agents,
+						fostering innovation and growth in the field of artificial
+						intelligence.
+					</p>
+				</div>
+				<div className="actions">
+					<Link to="/skills" className="btn-primary">
+						<Terminal size={18} />
+						<span>Browse Registry</span>
+					</Link>
+					<Link to="/skills/new" className="btn-secondary">
+						<Terminal size={18} />
+						<span>Publish Skills</span>
+					</Link>
+				</div>
+			</section>
+			<section className="latest">
+				<div className="space-y-2">
+					<h2>
+						Recently Created <span className="text-gradient">Skills</span>
+					</h2>
+					<p>
+						{" "}
+						Latest Skills Laoded from database in descending creation order
+					</p>
+				</div>
+				<div>
+					{dummySkills.length > 0 ? (
+						<div className="skills-grid">
+							{dummySkills.map((skill) => (
+								<SkillCard key={skill.id} {...skill} />
+							))}
+						</div>
+					) : (
+						<p>No skills have been created yet.</p>
+					)}
+				</div>
+			</section>
 		</div>
 	);
 }
