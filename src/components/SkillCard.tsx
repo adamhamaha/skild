@@ -1,4 +1,6 @@
 /** biome-ignore-all lint/a11y/useButtonType: <explanation> */
+
+import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 import {
 	ArrowBigUp,
@@ -20,11 +22,38 @@ const SkillCard = ({
 	title,
 }: SkillRecord) => {
 	const [copied, setCopied] = useState(false);
+	const posthog = usePostHog();
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText(installCommand);
 		setCopied(true);
 		setTimeout(() => setCopied(false), 2000);
+		posthog.capture("skill_install_command_copied", {
+			skill_title: title,
+			install_command: installCommand,
+			category,
+		});
+	};
+
+	const handleUpvote = () => {
+		posthog.capture("skill_upvoted", {
+			skill_title: title,
+			category,
+		});
+	};
+
+	const handleOpen = () => {
+		posthog.capture("skill_opened", {
+			skill_title: title,
+			category,
+		});
+	};
+
+	const handleBookmark = () => {
+		posthog.capture("skill_bookmarked", {
+			skill_title: title,
+			category,
+		});
 	};
 
 	return (
@@ -81,7 +110,7 @@ const SkillCard = ({
 				</div>
 				<div className="footer">
 					<div className="stats">
-						<button type="button" className="upvote">
+						<button type="button" className="upvote" onClick={handleUpvote}>
 							<ArrowBigUp size={16} fill="currentColor" />
 							<span>{tags.length}</span>
 						</button>
@@ -91,7 +120,12 @@ const SkillCard = ({
 						</div>
 					</div>
 					<div className="actions">
-						<Link to={`/skills`} className="open" title={`Open ${title}`}>
+						<Link
+							to={`/skills`}
+							className="open"
+							title={`Open ${title}`}
+							onClick={handleOpen}
+						>
 							<span>Open</span>
 							<ArrowUpRight size={14} />
 						</Link>
@@ -101,6 +135,7 @@ const SkillCard = ({
 							className="save"
 							aria-label="saved state"
 							disabled
+							onClick={handleBookmark}
 						>
 							<Bookmark size={14} />
 						</button>
